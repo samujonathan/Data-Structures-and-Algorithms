@@ -29,27 +29,46 @@ void insertHead(int val) {
 }
 
 void insertTail(int val) {
-	struct Node* newNode = createNode(val);
-	struct Node* temp = head; 
-	while(temp->next != NULL) {
-		temp = temp->next;
-	}
-	temp->next = newNode;
+    struct Node* newNode = createNode(val);
+    if(head != NULL) {
+    	struct Node* temp = head; 
+    	while(temp->next != NULL) {
+    		temp = temp->next;
+    	}
+    	temp->next = newNode;
+    } else {
+        head = newNode;
+    }
+
 }
 
 void insertAtPos(int val, int pos) {
 	if (pos < count) {
 		struct Node* newNode = createNode(val);
 		struct Node* temp = head;
-		struct Node* prevNode = head;
+		struct Node* prev = head;
 		int i = 1;
-		while (temp->next != NULL && i < pos) {
-			prevNode = temp;
+		while (temp->next != NULL && i <= pos) {
+		    prev = temp;
 			temp = temp->next;
+			i++;
 		}
 		newNode->next = temp;
-		prevNode->next = newNode;	
+		prev->next = newNode;	
 	}
+}
+
+void insertAfterVal(int val, int pos) {
+    if(head != NULL) {
+		struct Node* newNode = createNode(val);
+		struct Node* temp = head;
+		while (temp->next != NULL && temp->data != pos) {
+			temp = temp->next;
+		}
+		newNode->next = temp->next;
+		temp->next = newNode;        
+    }
+	
 }
 
 void deleteHead() {
@@ -82,7 +101,7 @@ void deleteAtPos(int pos) {
 		struct Node* temp = head;
 		struct Node* prevNode = head;
 
-		int i = 0;
+		int i = 1;
 		while (temp->next != NULL && i < pos) {
 			prevNode = temp;
 			temp = temp->next;
@@ -91,6 +110,36 @@ void deleteAtPos(int pos) {
 		prevNode->next = temp->next;
 		free(temp);
 	}
+}
+
+void deleteVal(int val) {
+	if(head != NULL) {
+		struct Node* temp = head;
+		struct Node* prevNode = head;
+
+		while (temp->next != NULL && temp->data != val) {
+			prevNode = temp;
+			temp = temp->next;
+		}
+		prevNode->next = temp->next;
+		free(temp);
+	}
+}
+
+int search(int val) {
+    struct Node* temp = head;
+    int pos = 1;
+    while(temp != NULL) {
+        if(temp->data == val) {
+            printf("%d available at %d\n", val, pos);
+            return pos;
+        }
+        temp = temp->next;
+        pos++;
+    }
+    printf("%d Not available\n", val);
+    return -1;
+    
 }
 
 void display() {
@@ -106,14 +155,26 @@ void display() {
 	}
 }
 
-int main() {
-	insertHead(3);
-	insertHead(67);
-	insertTail(40);
-	insertAtPos(50, 2);
+void createList(int* arr, int n) {
+    for(int i = 0; i < n; i++) {
+        insertTail(*(arr+i));
+    }
+}
 
+int main() {
+    int arr[] = {21, 14, 20, 51, 61, 30};
+    createList(arr, 6);
+    display();
+    insertAtPos(32, 3);
+    display();
+    insertHead(9);
+    display();
+    deleteVal(32);
+    display();
+    deleteAtPos(2);
 	display();
-	deleteAtPos(1);
-	display();
+	
+	search(51);
+	search(90);
 	return 0;
 }
