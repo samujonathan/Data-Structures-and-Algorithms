@@ -60,6 +60,7 @@ void insertAfter(int val, int pos) {
 		} else {
 			temp->next = newNode;
 			newNode->prev = temp;
+			start = newNode;
 		}
 	}
 }
@@ -73,26 +74,69 @@ void insertBefore(int val, int pos) {
 		while (temp->data != pos && temp->next != NULL) {
 			temp = temp->next;
 		}
-		if (temp->next != NULL) {
-			newNode->next = temp->next;
-			temp->next->prev = newNode;
-			temp->next = newNode;
-			newNode->prev = temp;
+		if (temp->prev != NULL) {
+			temp->prev->next = newNode;
+			newNode->prev = temp->prev;
+			temp->prev = newNode;
+			newNode->next = temp;
 		} else {
-			temp->next = newNode;
-			newNode->prev = temp;
+			temp->prev = newNode;
+			newNode->next = temp;
+			start = newNode;
 		}
 	}
 }
 
-void display() {
-	struct Node* temp = start;
-	while (temp->next != NULL) {
-		printf("%d ", temp->data);
-		temp = temp->next;
+void deleteHead() {
+	if(start != NULL) {
+		struct Node* temp = start;
+		start = start->next;
+		start->prev = NULL;
+		free(temp);
+	} else {
+		printf("Underflow\n");
 	}
-	printf("%d ", temp->data);
-	putchar('\n');
+}
+
+void deleteTail() {
+	if (start != NULL) {
+		struct Node* temp = start;
+		while (temp->next != NULL) {
+			temp = temp->next;
+		}
+		if(temp->prev != NULL) {
+			temp->prev->next = NULL;
+			free(temp);
+		} else {
+			start = NULL;
+		}
+	} else {
+		printf("Underflow\n");
+	}
+}
+
+void deleteAt(int pos) {
+	if(start != NULL) {
+		struct Node* temp = start;
+		while (temp->data != pos && temp->next != NULL) {
+			temp = temp->next;
+		}	
+		temp->next->prev = temp->prev;
+		temp->prev->next = temp->next;
+		free(temp);
+	}
+}
+
+void display() {
+	if(start != NULL) {
+		struct Node* temp = start;
+		while (temp->next != NULL) {
+			printf("%d ", temp->data);
+			temp = temp->next;
+		}
+		printf("%d ", temp->data);
+		putchar('\n');
+	}
 }
 
 int main() {
@@ -101,8 +145,9 @@ int main() {
 	insertHead(5);
 	insertTail(7);
 	insertAfter(14, 13);
+	insertBefore(15, 13);
+	deleteAt(13);
 
 	display();
-	/** printf("%d %d %d\n", start->data, start->next->data, start->next->next->data); */
 	return 0;
 }
