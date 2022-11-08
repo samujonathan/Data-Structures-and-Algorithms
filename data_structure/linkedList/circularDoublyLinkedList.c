@@ -47,6 +47,13 @@ void insertTail(int val) {
 	}
 }
 
+void insertAfter(int val) {
+	struct Node* newNode = createNode(val);
+	if (head != NULL) {
+		struct Node* temp = head;
+	}
+}
+
 void display() {
 	if (head != NULL) {
 		struct Node* temp = head;
@@ -70,6 +77,5 @@ int main() {
 	display();
 	insertTail(19);
 	display();
-	/** printf("%d\n", head->prev->data); */
 	return 0;
 }

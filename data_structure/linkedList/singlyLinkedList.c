@@ -1,52 +1,54 @@
 #include<stdio.h>
 #include <stdlib.h>
 
-struct Node* head;
+/** struct Node* head; */
 int count = 0;
 
 struct Node {
-	int data;
+	int coeff;
+	int exp;
 	struct Node* next;
 };
 
-struct Node* createNode(int val) {
+struct Node* createNode(int coeff, int exp) {
 	struct Node* newNode;
 	newNode = (struct Node*)malloc(sizeof(struct Node));
-	newNode->data = val;
+	newNode->coeff = coeff;
+	newNode->exp = exp;
 	newNode->next = NULL; 
 	count++;
 	return newNode;
 }
 
-void insertHead(int val) {
-	struct Node* newNode = createNode(val);
+void insertHead(struct Node** head, int coeff, int exp) {
+	struct Node* newNode = createNode(coeff, exp);
 	if(head == NULL) {
-		head = newNode;
+		(*head) = newNode;
 	} else {
-		newNode->next = head;
-		head = newNode;
+		newNode->next = *head;
+		(*head) = newNode;
 	}
 }
 
-void insertTail(int val) {
-    struct Node* newNode = createNode(val);
-    if(head != NULL) {
-    	struct Node* temp = head; 
+void insertTail(struct Node** head, int coeff, int exp) {
+    struct Node* newNode = createNode(coeff, exp);
+    if(*head != NULL) {
+    	struct Node* temp = *head; 
     	while(temp->next != NULL) {
     		temp = temp->next;
     	}
     	temp->next = newNode;
     } else {
-        head = newNode;
+        (*head) = newNode;
     }
 
 }
 
-void insertAtPos(int val, int pos) {
+void insertAtPos(struct Node** head, int coeff, int exp, int pos) {
 	if (pos < count) {
-		struct Node* newNode = createNode(val);
-		struct Node* temp = head;
-		struct Node* prev = head;
+		struct Node* newNode = createNode(coeff, exp);
+		struct Node* temp = *head;
+		struct Node* prev = *head;
 		int i = 1;
 		while (temp->next != NULL && i <= pos) {
 		    prev = temp;
@@ -58,11 +60,11 @@ void insertAtPos(int val, int pos) {
 	}
 }
 
-void insertAfterVal(int val, int pos) {
-    if(head != NULL) {
-		struct Node* newNode = createNode(val);
-		struct Node* temp = head;
-		while (temp->next != NULL && temp->data != pos) {
+void insertAfterVal(struct Node** head, int coeff, int exp, int pos) {
+    if(*head != NULL) {
+		struct Node* newNode = createNode(coeff, exp);
+		struct Node* temp = *head;
+		while (temp->next != NULL && temp->coeff != pos) {
 			temp = temp->next;
 		}
 		newNode->next = temp->next;
@@ -71,20 +73,20 @@ void insertAfterVal(int val, int pos) {
 	
 }
 
-void deleteHead() {
+void deleteHead(struct Node** head) {
 	if(head != NULL) {
-		struct Node* temp = head;
-		head = head->next;
+		struct Node* temp = *head;
+		*head = (*head)->next;
 		free(temp);
 	} else {
 		printf("Underflow\n");
 	}
 }
 
-void deleteTail() {
+void deleteTail(struct Node** head) {
 	if(head != NULL) {
-		struct Node* temp = head;
-		struct Node* prevNode = head;
+		struct Node* temp = *head;
+		struct Node* prevNode = *head;
 		while (temp->next != NULL) {
 			prevNode = temp;
 			temp = temp->next;
@@ -96,10 +98,10 @@ void deleteTail() {
 	}
 }
 
-void deleteAtPos(int pos) {
+void deleteAtPos(struct Node** head, int pos) {
 	if(head != NULL && pos < count) {
-		struct Node* temp = head;
-		struct Node* prevNode = head;
+		struct Node* temp = *head;
+		struct Node* prevNode = *head;
 
 		int i = 1;
 		while (temp->next != NULL && i < pos) {
@@ -112,12 +114,12 @@ void deleteAtPos(int pos) {
 	}
 }
 
-void deleteVal(int val) {
+void deleteVal(struct Node** head, int val) {
 	if(head != NULL) {
-		struct Node* temp = head;
-		struct Node* prevNode = head;
+		struct Node* temp = *head;
+		struct Node* prevNode = *head;
 
-		while (temp->next != NULL && temp->data != val) {
+		while (temp->next != NULL && temp->coeff != val) {
 			prevNode = temp;
 			temp = temp->next;
 		}
@@ -126,11 +128,11 @@ void deleteVal(int val) {
 	}
 }
 
-int search(int val) {
-    struct Node* temp = head;
+int search(struct Node** head, int val) {
+    struct Node* temp = *head;
     int pos = 1;
     while(temp != NULL) {
-        if(temp->data == val) {
+        if(temp->coeff == val) {
             printf("%d available at %d\n", val, pos);
             return pos;
         }
@@ -142,39 +144,39 @@ int search(int val) {
     
 }
 
-void display() {
+void display(struct Node** head) {
 	if (head != NULL) {
-		struct Node* temp = head;
+		struct Node* temp = *head;
 		while (temp->next != NULL) {
-			printf("%d-> ", temp->data);
+			printf("(%d %d)-> ", temp->coeff, temp->exp);
 			temp = temp->next;
 		}
-		printf("%d\n", temp->data);
+		printf("(%d %d)\n", temp->coeff, temp->exp);
 	} else {
 		printf("List is empty\n");
 	}
 }
 
-void createList(int* arr, int n) {
+void createList(struct Node** head, int* coeff, int* exp, int n) {
     for(int i = 0; i < n; i++) {
-        insertTail(*(arr+i));
+        insertTail(head, *(coeff+i), *(exp+i));
     }
 }
 
-int main() {
-    int arr[] = {21, 14, 20, 51, 61, 30};
-    createList(arr, 6);
-    display();
-    insertAtPos(32, 3);
-    display();
-    insertHead(9);
-    display();
-    deleteVal(32);
-    display();
-    deleteAtPos(2);
-	display();
-	
-	search(51);
-	search(90);
-	return 0;
-}
+/** int main() { */
+/**     int arr[] = {21, 14, 20, 51, 61, 30}; */
+/**     createList(arr, 6); */
+/**     display(); */
+/**     insertAtPos(32, 3); */
+/**     display(); */
+/**     insertHead(9); */
+/**     display(); */
+/**     deleteVal(32); */
+/**     display(); */
+/**     deleteAtPos(2); */
+/**     display(); */
+/**  */
+/**     search(51); */
+/**     search(90); */
+/**     return 0; */
+/** } */
