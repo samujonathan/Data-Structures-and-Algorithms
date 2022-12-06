@@ -7,7 +7,7 @@ struct Node {
     struct Node* right;
 };
 
-struct Node* createNode(int val) {
+struct Node* newNode(int val) {
     struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
     newNode->data = val;
     newNode->left = NULL;
@@ -15,8 +15,17 @@ struct Node* createNode(int val) {
     return newNode;
 }
 
-void insert(struct Node** root, int val) {
-    
+struct Node* insert(struct Node* node, int key)
+{
+    if (node == NULL)
+        return newNode(key);
+ 
+    if (key < node->data)
+        node->left = insert(node->left, key);
+    else if (key > node->data)
+        node->right = insert(node->right, key);
+ 
+    return node;
 }
 
 int height(struct Node** root) {
@@ -55,11 +64,8 @@ struct Node** inOrder(struct Node** root) {
         return root;
     }
     inOrder(&(*root)->left);
-	/** printf("val: %d ", (*root)->data); */
-	int leftVal = (*root)->data;
+	printf("%d ", (*root)->data);
     inOrder(&(*root)->right);
-	int rightVal = (*root)->data;
-	printf("%d %d %d\n", leftVal, rightVal);
 
 	return root;
 }
@@ -83,24 +89,25 @@ void postOrder(struct Node** root) {
 }
 
 int main() {
-    // Write C code here
-    struct Node* root = createNode(1);
-    root->left = createNode(2);
-    root->right = createNode(3);
-    root->left->left = createNode(4);
-    root->left->right = createNode(5);
-    
-    root->right->left = createNode(6);
-    root->right->right = createNode(7);
 
+	int n;
+	scanf("%d", &n);
+    struct Node* root;
+
+	for (int i = 0; i < n; i++) {
+		int digit;
+		scanf("%d", &digit);
+		root = insert(root, digit);
+
+	}
 	inOrder(&root);
 	putchar('\n');
 	preOrder(&root);
 	putchar('\n');
-    /** postOrder(&root); */
-    /** putchar('\n'); */
-    /** levelOrder(&root); */
-    /** printf("%d\n", height(&root)); */
-    /** putchar('\n'); */
+	postOrder(&root);
+	putchar('\n');
+	levelOrder(&root);
+	printf("%d\n", height(&root));
+	putchar('\n');
     return 0;
 }
